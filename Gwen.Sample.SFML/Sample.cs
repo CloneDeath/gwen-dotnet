@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Gwen.Control;
+using OpenTK.Graphics.OpenGL;
 using SFML.Graphics;
 using SFML.Window;
-using Tao.OpenGl;
 using KeyEventArgs = SFML.Window.KeyEventArgs;
 using MessageBox = System.Windows.Forms.MessageBox;
 
@@ -101,7 +101,7 @@ namespace Gwen.Sample.SFML
                     m_Window.Clear();
 
                     // Clear depth buffer
-                    Gl.glClear(Gl.GL_DEPTH_BUFFER_BIT | Gl.GL_COLOR_BUFFER_BIT);
+	                GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.ColorBufferBit);
 
                     if (ftime.Count == fps_frames)
                         ftime.RemoveAt(0);

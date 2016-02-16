@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using OpenTK.Graphics.OpenGL;
 using SFML;
 using SFML.Graphics;
 using SFML.Window;
-using Tao.OpenGl;
 using Color = SFML.Graphics.Color;
 using Image = SFML.Graphics.Image;
+using PrimitiveType = SFML.Graphics.PrimitiveType;
 using SFMLTexture = SFML.Graphics.Texture;
 
 namespace Gwen.Renderer
@@ -418,14 +419,14 @@ namespace Gwen.Renderer
             view.Dispose();
             clip.Y = v.Height - (clip.Y + clip.Height);
 
-            Gl.glScissor(clip.X, clip.Y, clip.Width, clip.Height);
-            Gl.glEnable(Gl.GL_SCISSOR_TEST);
+	        GL.Scissor(clip.X, clip.Y, clip.Width, clip.Height);
+            GL.Enable(EnableCap.ScissorTest);
         }
 
         public override void EndClip()
         {
             FlushCache();
-            Gl.glDisable(Gl.GL_SCISSOR_TEST);
+	        GL.Disable(EnableCap.ScissorTest);
         }
 
         private void FlushCache()
