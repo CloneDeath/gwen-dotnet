@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Windows.Forms;
 using Gwen.ControlInternal;
 
 namespace Gwen.Control
@@ -95,7 +94,7 @@ namespace Gwen.Control
         public bool SplittersVisible
         {
             get { return m_CSplitter.ShouldDrawBackground; }
-            set 
+            set
             {
                 m_CSplitter.ShouldDrawBackground = value;
                 m_VSplitter.ShouldDrawBackground = value;
@@ -227,7 +226,7 @@ namespace Gwen.Control
         {
             if (ZoomChanged != null)
 				ZoomChanged.Invoke(this, EventArgs.Empty);
-         
+
             if (m_ZoomedSection == -1)
             {
                 if (PanelUnZoomed != null)

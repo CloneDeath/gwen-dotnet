@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Windows.Forms;
 using Gwen.ControlInternal;
 
 namespace Gwen.Control
@@ -17,7 +16,7 @@ namespace Gwen.Control
         /// Invoked when one of the panels has been zoomed (maximized).
         /// </summary>
         public event GwenEventHandler<EventArgs> PanelZoomed;
-        
+
         /// <summary>
         /// Invoked when one of the panels has been unzoomed (restored).
         /// </summary>
@@ -36,20 +35,20 @@ namespace Gwen.Control
             : base(parent)
         {
             m_Sections = new Base[2];
-            
+
             m_VSplitter = new SplitterBar(this);
             m_VSplitter.SetPosition(0, 128);
             m_VSplitter.Dragged += OnVerticalMoved;
             m_VSplitter.Cursor = Cursors.SizeNS;
-            
+
             m_VVal = 0.5f;
 
             SetPanel(0, null);
             SetPanel(1, null);
-            
+
             SplitterSize = 5;
             SplittersVisible = false;
-            
+
             m_ZoomedSection = -1;
         }
 
@@ -61,12 +60,12 @@ namespace Gwen.Control
             m_VVal = 0.5f;
             Invalidate();
         }
-        
+
         /// <summary>
         /// Indicates whether any of the panels is zoomed.
         /// </summary>
         public bool IsZoomed { get { return m_ZoomedSection != -1; } }
-        
+
         /// <summary>
         /// Gets or sets a value indicating whether splitters should be visible.
         /// </summary>
@@ -83,12 +82,12 @@ namespace Gwen.Control
         /// Gets or sets the size of the splitter.
         /// </summary>
         public int SplitterSize { get { return m_BarSize; } set { m_BarSize = value; } }
-        
+
         private void UpdateVSplitter()
         {
             m_VSplitter.MoveTo(m_VSplitter.X, (Height - m_VSplitter.Height) * (m_VVal));
         }
-        
+
         protected void OnVerticalMoved(Base control, EventArgs args)
         {
             m_VVal = CalculateValueVertical();
@@ -99,7 +98,7 @@ namespace Gwen.Control
         {
             return m_VSplitter.Y / (float)(Height - m_VSplitter.Height);
         }
-        
+
         /// <summary>
         /// Lays out the control's interior according to alignment, padding, dock etc.
         /// </summary>
@@ -107,14 +106,14 @@ namespace Gwen.Control
         protected override void Layout(Skin.Base skin)
         {
             m_VSplitter.SetSize(Width, m_BarSize);
-            
+
             UpdateVSplitter();
-            
+
             if (m_ZoomedSection == -1)
             {
                 if (m_Sections[0] != null)
                     m_Sections[0].SetBounds(0, 0, Width, m_VSplitter.Y);
-                
+
                 if (m_Sections[1] != null)
                     m_Sections[1].SetBounds(0, m_VSplitter.Y + m_BarSize, Width, Height - (m_VSplitter.Y + m_BarSize));
             }
@@ -124,7 +123,7 @@ namespace Gwen.Control
                 m_Sections[m_ZoomedSection].SetBounds(0, 0, Width, Height);
             }
         }
-        
+
         /// <summary>
         /// Assigns a control to the specific inner section.
         /// </summary>
@@ -133,7 +132,7 @@ namespace Gwen.Control
         public void SetPanel(int index, Base panel)
         {
             m_Sections[index] = panel;
-            
+
             if (panel != null)
             {
                 panel.Dock = Pos.None;
@@ -152,7 +151,7 @@ namespace Gwen.Control
         {
             return m_Sections[index];
         }
-        
+
         /// <summary>
         /// Internal handler for the zoom changed event.
         /// </summary>

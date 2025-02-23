@@ -24,7 +24,7 @@ namespace Gwen.Input
         /// <summary>
         /// Control that corrently has keyboard focus.
         /// </summary>
-        public static Base KeyboardFocus;
+        public static Base? KeyboardFocus;
 
         /// <summary>
         /// Control that currently has mouse focus.
@@ -300,7 +300,7 @@ namespace Gwen.Input
                         return true;
                     }
 
-                case 1: 
+                case 1:
                     {
                         if (isDoubleClick)
 							HoveredControl.InputMouseDoubleClickedRight(MousePosition.X, MousePosition.Y);

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Drawing;
-using System.Windows.Forms;
 using Gwen.Anim;
 using Gwen.DragDrop;
 using Gwen.Input;
@@ -27,13 +26,13 @@ namespace Gwen.Control
         private Base m_Parent;
 
         /// <summary>
-        /// This is the panel's actual parent - most likely the logical 
+        /// This is the panel's actual parent - most likely the logical
         /// parent's InnerPanel (if it has one). You should rarely need this.
         /// </summary>
         private Base m_ActualParent;
 
         /// <summary>
-        /// If the innerpanel exists our children will automatically become children of that 
+        /// If the innerpanel exists our children will automatically become children of that
         /// instead of us - allowing us to move them all around by moving that panel (useful for scrolling etc).
         /// </summary>
         protected Base m_InnerPanel;
@@ -1093,7 +1092,7 @@ namespace Gwen.Control
         /// <param name="skin">Skin to use.</param>
         internal virtual void DoRender(Skin.Base skin)
         {
-            // If this control has a different skin, 
+            // If this control has a different skin,
             // then so does its children.
             if (m_Skin != null)
                 skin = m_Skin;

@@ -9,7 +9,7 @@ namespace Gwen.Control
     /// </summary>
     public class ComboBox : Button
     {
-        private readonly Menu m_Menu;
+        private readonly Menu? m_Menu;
         private readonly Base m_Button;
         private MenuItem m_SelectedItem;
 
@@ -262,7 +262,7 @@ namespace Gwen.Control
         }
 
         /// <summary>
-        /// Selects the first menu item with the given text it finds. 
+        /// Selects the first menu item with the given text it finds.
         /// If a menu item can not be found that matches input, nothing happens.
         /// </summary>
         /// <param name="label">The label to look for, this is what is shown to the user.</param>

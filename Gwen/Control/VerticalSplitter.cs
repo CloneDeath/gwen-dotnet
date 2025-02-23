@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Windows.Forms;
 using Gwen.ControlInternal;
 
 namespace Gwen.Control
@@ -113,9 +112,9 @@ namespace Gwen.Control
         protected override void Layout(Skin.Base skin)
         {
             m_HSplitter.SetSize(m_BarSize, Height);
-            
+
             UpdateHSplitter();
-            
+
             if (m_ZoomedSection == -1)
             {
                 if (m_Sections[0] != null)
@@ -145,10 +144,10 @@ namespace Gwen.Control
                 panel.Dock = Pos.None;
                 panel.Parent = this;
             }
-            
+
             Invalidate();
         }
-        
+
         /// <summary>
         /// Gets the specific inner section.
         /// </summary>
@@ -207,13 +206,13 @@ namespace Gwen.Control
         public void UnZoom()
         {
             m_ZoomedSection = -1;
-            
+
             for (int i = 0; i < 2; i++)
             {
                 if (m_Sections[i] != null)
                     m_Sections[i].IsHidden = false;
             }
-            
+
             Invalidate();
             OnZoomChanged();
         }

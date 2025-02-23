@@ -24,11 +24,11 @@ namespace Gwen
 
         //public bool Bold { get; set; }
         //public bool DropShadow { get; set; }
-        
+
         /// <summary>
         /// This should be set by the renderer if it tries to use a font where it's null.
         /// </summary>
-        public object RendererData { get; set; }
+        public object? RendererData { get; set; }
 
         /// <summary>
         /// This is the real font size, after it's been scaled by Renderer.Scale()
@@ -70,7 +70,7 @@ namespace Gwen
             m_Renderer.FreeFont(this);
             GC.SuppressFinalize(this);
         }
-        
+
 #if DEBUG
         ~Font()
         {
