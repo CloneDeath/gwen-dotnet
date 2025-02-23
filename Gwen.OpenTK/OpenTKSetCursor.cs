@@ -1,4 +1,3 @@
-namespace Gwen.OpenTK {
+namespace Gwen.OpenTK;
 
-	public class OpenTKSetCursor { }
-}
+public class OpenTKSetCursor { }

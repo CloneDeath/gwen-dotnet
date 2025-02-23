@@ -1,14 +1,13 @@
-﻿using Gwen.Net.Control;
-using static Gwen.Net.Platform.GwenPlatform;
-
-namespace Gwen.Net.CommonDialog
+﻿using System.IO;
+using Gwen.Control;
+namespace Gwen.CommonDialog
 {
     /// <summary>
     /// Dialog for selecting an existing directory.
     /// </summary>
     public class FolderBrowserDialog : FileDialog
     {
-        public FolderBrowserDialog(ControlBase parent)
+        public FolderBrowserDialog(Control.Base parent)
             : base(parent)
         {
         }
@@ -24,15 +23,15 @@ namespace Gwen.Net.CommonDialog
 
         protected override void OnItemSelected(string path)
         {
-            if (DirectoryExists(path))
+            if (Directory.Exists(path))
             {
-                SetCurrentItem(GetFileName(path));
+                SetCurrentItem(Path.GetFileName(path));
             }
         }
 
         protected override bool IsSubmittedNameOk(string path)
         {
-            if (DirectoryExists(path))
+            if (Directory.Exists(path))
             {
                 SetPath(path);
                 return true;
@@ -43,7 +42,7 @@ namespace Gwen.Net.CommonDialog
 
         protected override bool ValidateFileName(string path)
         {
-            return DirectoryExists(path);
+            return Directory.Exists(path);
         }
     }
 }

@@ -11,12 +11,12 @@ namespace Gwen.Control
     {
         private readonly Menu? m_Menu;
         private readonly Base m_Button;
-        private MenuItem m_SelectedItem;
+        private MenuItem? m_SelectedItem;
 
         /// <summary>
         /// Invoked when the selected item has changed.
         /// </summary>
-        public event GwenEventHandler<ItemSelectedEventArgs> ItemSelected;
+        public event GwenEventHandler<ItemSelectedEventArgs>? ItemSelected;
 
         /// <summary>
         /// Indicates whether the combo menu is open.
@@ -61,6 +61,18 @@ namespace Gwen.Control
                     m_SelectedItem = value;
                     OnItemSelected(m_SelectedItem, new ItemSelectedEventArgs(value));
                 }
+            }
+        }
+
+        public int SelectedIndex {
+            get {
+                if (m_Menu == null)
+                    return -1;
+                return m_Menu.Children.FindIndex(x => x == m_SelectedItem);
+            }
+            set {
+                if (m_Menu == null) return;
+                OnItemSelected(this, new ItemSelectedEventArgs(m_Menu.Children[value]));
             }
         }
 

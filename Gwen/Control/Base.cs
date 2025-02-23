@@ -35,7 +35,7 @@ namespace Gwen.Control
         /// If the innerpanel exists our children will automatically become children of that
         /// instead of us - allowing us to move them all around by moving that panel (useful for scrolling etc).
         /// </summary>
-        protected Base m_InnerPanel;
+        protected Base? m_InnerPanel;
 
         private Base m_ToolTip;
 
@@ -47,7 +47,7 @@ namespace Gwen.Control
         private Padding m_Padding;
         private Margin m_Margin;
 
-        private string m_Name;
+        private string? m_Name;
 
         private bool m_RestrictToParent;
         private bool m_Disabled;
@@ -68,7 +68,7 @@ namespace Gwen.Control
 
         private Package m_DragAndDrop_Package;
 
-        private object m_UserData;
+        private object? m_UserData;
 
         private bool m_DrawDebugOutlines;
 
@@ -280,7 +280,7 @@ namespace Gwen.Control
         /// <summary>
         /// User data associated with the control.
         /// </summary>
-        public object UserData { get { return m_UserData; } set { m_UserData = value; } }
+        public object? UserData { get { return m_UserData; } set { m_UserData = value; } }
 
         /// <summary>
         /// Indicates whether the control is hovered by mouse pointer.
@@ -340,7 +340,7 @@ namespace Gwen.Control
         /// <summary>
         /// Gets or sets the control's internal name.
         /// </summary>
-        public string Name { get { return m_Name; } set { m_Name = value; } }
+        public string? Name { get { return m_Name; } set { m_Name = value; } }
 
         /// <summary>
         /// Control's size and position relative to the parent.
@@ -456,7 +456,7 @@ namespace Gwen.Control
             KeyboardInputEnabled = false;
 
             Invalidate();
-            Cursor = Cursors.Default;
+            Cursor = Cursor.Normal;
             //ToolTip = null;
             IsTabable = false;
             ShouldDrawBackground = true;
@@ -714,7 +714,7 @@ namespace Gwen.Control
         /// <param name="name">Child name.</param>
         /// <param name="recursive">Determines whether the search should be recursive.</param>
         /// <returns>Found control or null.</returns>
-        public virtual Base FindChildByName(string name, bool recursive = false)
+        public virtual Base? FindChildByName(string name, bool recursive = false)
         {
             Base b = m_Children.Find(x => x.m_Name == name);
             if (b != null)
@@ -730,6 +730,10 @@ namespace Gwen.Control
                 }
             }
             return null;
+        }
+
+        public virtual TControl? FindChildByName<TControl>(string name, bool recursive = false) where TControl : Base {
+            return FindChildByName(name, recursive) as TControl;
         }
 
         /// <summary>

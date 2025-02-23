@@ -1,21 +1,17 @@
 ﻿using System;
-using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using Gwen.Control;
-using Gwen.Net.Control;
-using Gwen.Net.Xml;
-using Gwen.Net.Platform;
-using static Gwen.Net.Platform.GwenPlatform;
 
-namespace Gwen.Net.CommonDialog
+namespace Gwen.CommonDialog
 {
     /// <summary>
     /// Base class for a file or directory dialog.
     /// </summary>
-    public abstract class FileDialog : Component
+    public abstract class FileDialog : WindowControl
     {
-        private Action<string> m_Callback;
+        private Action<string>? m_Callback;
 
         private string m_CurrentFolder;
         private string m_CurrentFilter;
@@ -33,7 +29,6 @@ namespace Gwen.Net.CommonDialog
         private Button m_NewFolder;
         private VerticalSplitter m_NameFilterSplitter;
         private Label m_FileNameLabel;
-        private WindowControl m_Window;
 
         /// <summary>
         /// Initial folder for the dialog.
@@ -44,11 +39,6 @@ namespace Gwen.Net.CommonDialog
         /// Set initial folder and selected item.
         /// </summary>
         public string CurrentItem { set { SetPath(Path.GetDirectoryName(value) ?? throw new NullReferenceException()); SetCurrentItem(Path.GetFileName(value)); } }
-
-        /// <summary>
-        /// Window title.
-        /// </summary>
-        public string Title { get { return m_Window.Title; } set { m_Window.Title = value; } }
 
         /// <summary>
         /// File filters. See <see cref="SetFilters(string, int)"/>.
@@ -69,7 +59,7 @@ namespace Gwen.Net.CommonDialog
         /// <summary>
         /// Hide or show new folder button.
         /// </summary>
-        public bool EnableNewFolder { get { return !m_NewFolder.IsCollapsed; } set { m_NewFolder.IsCollapsed = !value; } }
+        public bool EnableNewFolder { get { return !m_NewFolder.IsHidden; } set { m_NewFolder.IsHidden = !value; } }
 
         /// <summary>
         /// Show only directories.
@@ -80,7 +70,7 @@ namespace Gwen.Net.CommonDialog
             set
             {
                 m_FoldersOnly = value;
-                m_Filters.IsCollapsed = value;
+                m_Filters.IsHidden = value;
                 m_FileNameLabel.Text = "Folder name:";
                 if (value)
                     m_NameFilterSplitter.Zoom(0);
@@ -94,28 +84,27 @@ namespace Gwen.Net.CommonDialog
         /// </summary>
         /// <param name="parent">Parent.</param>
         protected FileDialog(Base parent)
-            : base(parent, new XmlStringSource(Xml))
+            : base(parent)
         {
         }
 
         protected override void OnCreated()
         {
-            m_Window = View as Window;
-            m_Folders = GetControl<TreeControl>("Folders");
-            m_Items = GetControl<ListBox>("Items");
-            m_Path = GetControl<TextBox>("Path");
-            m_SelectedName = GetControl<TextBox>("SelectedName");
-            m_Filters = GetControl<ComboBox>("Filters");
-            m_Ok = GetControl<Button>("Ok");
-            m_NewFolder = GetControl<Button>("NewFolder");
-            m_NameFilterSplitter = GetControl<VerticalSplitter>("NameFilterSplitter");
-            m_FileNameLabel = GetControl<Label>("FileNameLabel");
+            m_Folders = FindChildByName<TreeControl>("Folders");
+            m_Items = FindChildByName<ListBox>("Items");
+            m_Path = FindChildByName<TextBox>("Path");
+            m_SelectedName = FindChildByName<TextBox>("SelectedName");
+            m_Filters = FindChildByName<ComboBox>("Filters");
+            m_Ok = FindChildByName<Button>("Ok");
+            m_NewFolder = FindChildByName<Button>("NewFolder");
+            m_NameFilterSplitter = FindChildByName<VerticalSplitter>("NameFilterSplitter");
+            m_FileNameLabel = FindChildByName<Label>("FileNameLabel");
 
             UpdateFolders();
 
             m_OnClosing = false;
 
-            m_CurrentFolder = CurrentDirectory;
+            m_CurrentFolder = Directory.GetCurrentDirectory();
 
             m_CurrentFilter = "*.*";
             m_Filters.AddItem("All files (*.*)", "All files (*.*)", "*.*");
@@ -150,7 +139,7 @@ namespace Gwen.Net.CommonDialog
             if ((filters.Length & 0x1) == 0x1)
                 throw new Exception("Error in filter.");
 
-            m_Filters.RemoveAll();
+            m_Filters.DeleteAll();
 
             for (int i = 0; i < filters.Length; i += 2)
             {
@@ -173,7 +162,7 @@ namespace Gwen.Net.CommonDialog
         /// Close the dialog and call the call back function.
         /// </summary>
         /// <param name="path">Parameter for the call back function.</param>
-        protected void Close(string path)
+        protected void Close(string? path)
         {
             OnClosing(path, true);
         }
@@ -184,9 +173,9 @@ namespace Gwen.Net.CommonDialog
         /// <param name="path">Full path of selected file or directory.</param>
         protected virtual void OnItemSelected(string path)
         {
-            if ((DirectoryExists(path) && m_FoldersOnly) || (FileExists(path) && !m_FoldersOnly))
+            if ((Directory.Exists(path) && m_FoldersOnly) || (File.Exists(path) && !m_FoldersOnly))
             {
-                SetCurrentItem(GetFileName(path));
+                SetCurrentItem(Path.GetFileName(path));
             }
         }
 
@@ -197,14 +186,14 @@ namespace Gwen.Net.CommonDialog
         /// <returns>Is the name valid.</returns>
         protected virtual bool IsSubmittedNameOk(string path)
         {
-            if (DirectoryExists(path))
+            if (Directory.Exists(path))
             {
                 if (!m_FoldersOnly)
                 {
                     SetPath(path);
                 }
             }
-            else if (FileExists(path))
+            else if (File.Exists(path))
             {
                 return true;
             }
@@ -231,21 +220,20 @@ namespace Gwen.Net.CommonDialog
         /// </summary>
         /// <param name="path">Path for the call back function</param>
         /// <param name="doClose">True if the dialog needs to be closed.</param>
-        protected virtual void OnClosing(string path, bool doClose)
+        protected virtual void OnClosing(string? path, bool doClose)
         {
             if (m_OnClosing)
                 return;
 
             m_OnClosing = true;
 
-            if (doClose)
-                m_Window.Close();
+            Close();
 
             if (m_Callback != null)
                 m_Callback(path);
         }
 
-        private void OnPathSubmitted(ControlBase sender, EventArgs args)
+        private void OnPathSubmitted(Control.Base sender, EventArgs args)
         {
             if (!SetPath(m_Path.Text))
             {
@@ -253,19 +241,19 @@ namespace Gwen.Net.CommonDialog
             }
         }
 
-        private void OnUpClicked(ControlBase sender, ClickedEventArgs args)
+        private void OnUpClicked(Control.Base sender, ClickedEventArgs args)
         {
-            string newPath = GetDirectoryName(m_CurrentFolder);
+            string? newPath = Path.GetDirectoryName(m_CurrentFolder);
             if (newPath != null)
             {
                 SetPath(newPath);
             }
         }
 
-        private void OnNewFolderClicked(ControlBase sender, ClickedEventArgs args)
+        private void OnNewFolderClicked(Control.Base sender, ClickedEventArgs args)
         {
             string path = m_Path.Text;
-            if (DirectoryExists(path))
+            if (Directory.Exists(path))
             {
                 m_Path.Focus();
             }
@@ -273,26 +261,26 @@ namespace Gwen.Net.CommonDialog
             {
                 try
                 {
-                    CreateDirectory(path);
+                    Directory.CreateDirectory(path);
                     SetPath(path);
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(View, ex.Message, Title, MessageBoxButtons.OK);
+                catch (Exception ex) {
+                    var box = new MessageBox(this, ex.Message, Title);
+                    box.Show();
                 }
             }
         }
 
-        private void OnFolderSelected(ControlBase sender, EventArgs args)
+        private void OnFolderSelected(Control.Base sender, EventArgs args)
         {
-            TreeNode node = sender as TreeNode;
+            TreeNode? node = sender as TreeNode;
             if (node != null && node.UserData != null)
             {
                 SetPath(node.UserData as string);
             }
         }
 
-        private void OnItemSelected(ControlBase sender, ItemSelectedEventArgs args)
+        private void OnItemSelected(Control.Base sender, ItemSelectedEventArgs args)
         {
             string path = args.SelectedItem.UserData as string;
             if (path != null)
@@ -301,12 +289,12 @@ namespace Gwen.Net.CommonDialog
             }
         }
 
-        private void OnItemDoubleClicked(ControlBase sender, ItemSelectedEventArgs args)
+        private void OnItemDoubleClicked(Control.Base sender, ItemSelectedEventArgs args)
         {
             string path = args.SelectedItem.UserData as string;
             if (path != null)
             {
-                if (DirectoryExists(path))
+                if (Directory.Exists(path))
                 {
                     SetPath(path);
                 }
@@ -317,34 +305,34 @@ namespace Gwen.Net.CommonDialog
             }
         }
 
-        private void OnNameSubmitted(ControlBase sender, EventArgs args)
+        private void OnNameSubmitted(Control.Base sender, EventArgs args)
         {
-            string path = Combine(m_CurrentFolder, m_SelectedName.Text);
+            string path = Path.Combine(m_CurrentFolder, m_SelectedName.Text);
             if (IsSubmittedNameOk(path))
                 OnOkClicked(null, null);
         }
 
-        private void OnFilterSelected(ControlBase sender, ItemSelectedEventArgs args)
+        private void OnFilterSelected(Control.Base sender, ItemSelectedEventArgs args)
         {
             m_CurrentFilter = m_Filters.SelectedItem.UserData as string;
             UpdateItemList();
         }
 
-        private void OnOkClicked(ControlBase sender, ClickedEventArgs args)
+        private void OnOkClicked(Control.Base? sender, ClickedEventArgs? args)
         {
-            string path = Combine(m_CurrentFolder, m_SelectedName.Text);
+            string path = Path.Combine(m_CurrentFolder, m_SelectedName.Text);
             if (ValidateFileName(path))
             {
                 OnClosing(path, true);
             }
         }
 
-        private void OnCancelClicked(ControlBase sender, ClickedEventArgs args)
+        private void OnCancelClicked(Control.Base sender, ClickedEventArgs args)
         {
             OnClosing(null, true);
         }
 
-        private void OnWindowClosed(ControlBase sender, EventArgs args)
+        private void OnWindowClosed(Control.Base sender, EventArgs args)
         {
             OnClosing(null, false);
         }
@@ -353,41 +341,42 @@ namespace Gwen.Net.CommonDialog
         {
             m_Items.Clear();
 
-            IOrderedEnumerable<IFileSystemDirectoryInfo> directories;
-            IOrderedEnumerable<IFileSystemFileInfo> files = null;
+            IOrderedEnumerable<DirectoryInfo> directories;
+            IOrderedEnumerable<FileInfo>? files = null;
             try
             {
-                directories = GetDirectories(m_CurrentFolder).OrderBy(di => di.Name);
+                directories = Directory.GetDirectories(m_CurrentFolder).Select(p => new DirectoryInfo(p)).OrderBy(di => di.Name);
                 if (!m_FoldersOnly)
-                    files = GetFiles(m_CurrentFolder, m_CurrentFilter).OrderBy(fi => fi.Name);
+                    files = Directory.GetFiles(m_CurrentFolder, m_CurrentFilter).Select(f => new FileInfo(f)).OrderBy(fi => fi.Name);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(View, ex.Message, Title, MessageBoxButtons.OK);
+                var msgBox = new MessageBox(this, ex.Message, Title);
+                msgBox.Show();
                 return;
             }
 
-            foreach (IFileSystemDirectoryInfo di in directories)
+            foreach (DirectoryInfo di in directories)
             {
                 ListBoxRow row = m_Items.AddRow(di.Name, null, di.FullName);
                 row.SetCellText(1, "<dir>");
-                row.SetCellText(2, di.FormattedLastWriteTime);
+                row.SetCellText(2, di.LastWriteTime.ToString(CultureInfo.InvariantCulture));
             }
 
             if (!m_FoldersOnly)
             {
-                foreach (IFileSystemFileInfo fi in files)
+                foreach (FileInfo fi in files)
                 {
                     ListBoxRow row = m_Items.AddRow(fi.Name, null, fi.FullName);
-                    row.SetCellText(1, fi.FormattedFileLength);
-                    row.SetCellText(2, fi.FormattedFileLength);
+                    row.SetCellText(1, fi.Length.ToString());
+                    row.SetCellText(2, fi.Length.ToString());
                 }
             }
         }
 
         private void UpdateFolders()
         {
-            m_Folders.RemoveAllNodes();
+            m_Folders.DeleteAllChildren();
 
             foreach (ISpecialFolder folder in Platform.GwenPlatform.GetSpecialFolders())
             {

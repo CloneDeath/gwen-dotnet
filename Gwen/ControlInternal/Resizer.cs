@@ -129,22 +129,22 @@ namespace Gwen.ControlInternal
 
                 if ((0 != (value & Pos.Left) && 0 != (value & Pos.Top)) || (0 != (value & Pos.Right) && 0 != (value & Pos.Bottom)))
                 {
-                    Cursor = Cursors.SizeNWSE;
+                    Cursor = Cursor.SizeNWSE;
                     return;
                 }
                 if ((0 != (value & Pos.Right) && 0 != (value & Pos.Top)) || (0 != (value & Pos.Left) && 0 != (value & Pos.Bottom)))
                 {
-                    Cursor = Cursors.SizeNESW;
+                    Cursor = Cursor.SizeNESW;
                     return;
                 }
                 if (0 != (value & Pos.Right) || 0 != (value & Pos.Left))
                 {
-                    Cursor = Cursors.SizeWE;
+                    Cursor = Cursor.SizeWE;
                     return;
                 }
                 if (0 != (value & Pos.Top) || 0 != (value & Pos.Bottom))
                 {
-                    Cursor = Cursors.SizeNS;
+                    Cursor = Cursor.SizeNS;
                     return;
                 }
             }

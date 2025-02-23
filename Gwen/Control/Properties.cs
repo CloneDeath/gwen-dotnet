@@ -29,7 +29,7 @@ namespace Gwen.Control
         {
             m_SplitterBar = new SplitterBar(this);
             m_SplitterBar.SetPosition(80, 0);
-            m_SplitterBar.Cursor = Cursors.SizeWE;
+            m_SplitterBar.Cursor = Cursor.SizeWE;
             m_SplitterBar.Dragged += OnSplitterMoved;
             m_SplitterBar.ShouldDrawBackground = false;
         }

@@ -1,8 +1,7 @@
 ﻿using System.IO;
 using Gwen.Control;
-using static Gwen.Platform.GwenPlatform;
 
-namespace Gwen.Net.CommonDialog
+namespace Gwen.CommonDialog
 {
     /// <summary>
     /// Dialog for selecting an existing file.

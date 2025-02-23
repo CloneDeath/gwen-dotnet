@@ -10,8 +10,8 @@ namespace Gwen.DragDrop
     /// </summary>
     public static class DragAndDrop
     {
-        public static Package CurrentPackage;
-        public static Base HoveredControl;
+        public static Package? CurrentPackage;
+        public static Base? HoveredControl;
         public static Base SourceControl;
 
         private static Base m_LastPressedControl;
@@ -118,7 +118,7 @@ namespace Gwen.DragDrop
                 // Show the NO WAY cursor.
                 if (m_NewHoveredControl == null)
                 {
-                    Platform.Neutral.SetCursor(Cursors.No);
+                    Platform.Neutral.SetCursor(Cursor.No);
                 }
             }
 
@@ -193,12 +193,12 @@ namespace Gwen.DragDrop
                 return;
 
             // Update the hovered control every mouse move, so it can show where
-            // the dropped control will land etc..
+            // the dropped control will land etc...
             HoveredControl.DragAndDrop_Hover(CurrentPackage, x, y);
 
             // Override the cursor - since it might have been set my underlying controls
             // Ideally this would show the 'being dragged' control. TODO
-            Platform.Neutral.SetCursor(Cursors.Default);
+            Platform.Neutral.SetCursor(Cursor.Normal);
 
             hoveredControl.Redraw();
         }

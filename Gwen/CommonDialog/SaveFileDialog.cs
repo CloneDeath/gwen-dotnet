@@ -1,15 +1,15 @@
 ﻿using System;
-using Gwen.Net.Control;
-using static Gwen.Net.Platform.GwenPlatform;
+using System.IO;
+using Gwen.Control;
 
-namespace Gwen.Net.CommonDialog
+namespace Gwen.CommonDialog
 {
     /// <summary>
     /// Dialog for selecting a file name for saving or creating.
     /// </summary>
     public class SaveFileDialog : FileDialog
     {
-        public SaveFileDialog(ControlBase parent)
+        public SaveFileDialog(Control.Base parent)
             : base(parent)
         {
         }
@@ -24,19 +24,19 @@ namespace Gwen.Net.CommonDialog
 
         protected override void OnItemSelected(string path)
         {
-            if (FileExists(path))
+            if (File.Exists(path))
             {
-                SetCurrentItem(GetFileName(path));
+                SetCurrentItem(Path.GetFileName(path));
             }
         }
 
         protected override bool IsSubmittedNameOk(string path)
         {
-            if (DirectoryExists(path))
+            if (Directory.Exists(path))
             {
                 SetPath(path);
             }
-            else if (FileExists(path))
+            else if (File.Exists(path))
             {
                 return true;
             }
@@ -46,12 +46,14 @@ namespace Gwen.Net.CommonDialog
 
         protected override bool ValidateFileName(string path)
         {
-            if (DirectoryExists(path))
+            if (Directory.Exists(path))
                 return false;
 
-            if (FileExists(path))
+            if (File.Exists(path))
             {
-                MessageBox win = MessageBox.Show(View, String.Format("File '{0}' already exists. Do you want to replace it?", GetFileName(path)), Title, MessageBoxButtons.YesNo);
+                // TODO make this a MessageBoxButtons.YesNo control...
+                MessageBox win = new MessageBox(this,
+                    $"File '{Path.GetFileName(path)}' already exists. Do you want to replace it?", Title);
                 win.Dismissed += OnMessageBoxDismissed;
                 win.UserData = path;
                 return false;
@@ -60,7 +62,7 @@ namespace Gwen.Net.CommonDialog
             return true;
         }
 
-        private void OnMessageBoxDismissed(ControlBase sender, MessageBoxResultEventArgs args)
+        private void OnMessageBoxDismissed(Control.Base sender, MessageBoxResultEventArgs args)
         {
             if (args.Result == MessageBoxResult.Yes)
                 Close(sender.UserData as string);

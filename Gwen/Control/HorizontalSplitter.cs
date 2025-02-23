@@ -39,7 +39,7 @@ namespace Gwen.Control
             m_VSplitter = new SplitterBar(this);
             m_VSplitter.SetPosition(0, 128);
             m_VSplitter.Dragged += OnVerticalMoved;
-            m_VSplitter.Cursor = Cursors.SizeNS;
+            m_VSplitter.Cursor = Cursor.SizeNS;
 
             m_VVal = 0.5f;
 

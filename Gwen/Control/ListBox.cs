@@ -248,7 +248,7 @@ namespace Gwen.Control
         /// <param name="name">Internal control name.</param>
         /// <param name="UserData">User data for newly created row</param>
         /// <returns>Newly created control.</returns>
-        public ListBoxRow AddRow(string label, string name, Object UserData)
+        public ListBoxRow AddRow(string label, string? name, Object UserData)
         {
             ListBoxRow row = new ListBoxRow(this);
             m_Table.AddRow(row);
@@ -364,7 +364,7 @@ namespace Gwen.Control
         }
 
         /// <summary>
-        /// Selects the first menu item with the given text it finds. 
+        /// Selects the first menu item with the given text it finds.
         /// If a menu item can not be found that matches input, nothing happens.
         /// </summary>
         /// <param name="label">The label to look for, this is what is shown to the user.</param>

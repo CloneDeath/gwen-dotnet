@@ -12,16 +12,6 @@ namespace Gwen.Platform
         private static DateTime m_FirstTime = DateTime.Now;
 
         /// <summary>
-        /// Changes the mouse cursor.
-        /// </summary>
-        /// <param name="cursor">Cursor type.</param>
-        public static void SetCursor(Cursor cursor)
-        {
-            Cursor.Current = cursor;
-        }
-
-
-        /// <summary>
         /// Gets text from clipboard.
         /// </summary>
         /// <returns>Clipboard text.</returns>
@@ -47,82 +37,6 @@ namespace Gwen.Platform
         public static float GetTimeInSeconds()
         {
             return (float)(DateTime.Now - m_FirstTime).TotalSeconds;
-        }
-
-        /// <summary>
-        /// Displays an open file dialog.
-        /// </summary>
-        /// <param name="title">Dialog title.</param>
-        /// <param name="startPath">Initial path.</param>
-        /// <param name="extension">File extension filter.</param>
-        /// <param name="callback">Callback that is executed after the dialog completes.</param>
-        /// <returns>True if succeeded.</returns>
-        public static bool FileOpen(string title, string startPath, string extension, Action<string> callback)
-        {
-            var dialog = new OpenFileDialog
-                             {
-                                 Title = title,
-                                 InitialDirectory = startPath,
-                                 DefaultExt = @"*.*",
-                                 Filter = extension,
-                                 CheckPathExists = true,
-                                 Multiselect = false
-                             };
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                if (callback != null)
-                {
-                    callback(dialog.FileName);
-                }
-            }
-            else
-            {
-                if (callback != null)
-                {
-                    callback(String.Empty);
-                }
-                return false;
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// Displays a save file dialog.
-        /// </summary>
-        /// <param name="title">Dialog title.</param>
-        /// <param name="startPath">Initial path.</param>
-        /// <param name="extension">File extension filter.</param>
-        /// <param name="callback">Callback that is executed after the dialog completes.</param>
-        /// <returns>True if succeeded.</returns>
-        public static bool FileSave(string title, string startPath, string extension, Action<string> callback)
-        {
-            var dialog = new SaveFileDialog
-            {
-                Title = title,
-                InitialDirectory = startPath,
-                DefaultExt = @"*.*",
-                Filter = extension,
-                CheckPathExists = true,
-                OverwritePrompt = true
-            };
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                if (callback != null)
-                {
-                    callback(dialog.FileName);
-                }
-            }
-            else
-            {
-                if (callback != null)
-                {
-                    callback(String.Empty);
-                }
-                return false;
-            }
-
-            return true;
         }
     }
 }

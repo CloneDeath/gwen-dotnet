@@ -12,7 +12,7 @@ namespace Gwen.Control
         private readonly SplitterBar m_HSplitter;
         private readonly SplitterBar m_CSplitter;
 
-        private readonly Base[] m_Sections;
+        private readonly Base?[] m_Sections;
 
         private float m_HVal; // 0-1
         private float m_VVal; // 0-1
@@ -47,17 +47,17 @@ namespace Gwen.Control
             m_VSplitter = new SplitterBar(this);
             m_VSplitter.SetPosition(0, 128);
             m_VSplitter.Dragged += OnVerticalMoved;
-            m_VSplitter.Cursor = Cursors.SizeNS;
+            m_VSplitter.Cursor = Cursor.SizeNS;
 
             m_HSplitter = new SplitterBar(this);
             m_HSplitter.SetPosition(128, 0);
             m_HSplitter.Dragged += OnHorizontalMoved;
-            m_HSplitter.Cursor = Cursors.SizeWE;
+            m_HSplitter.Cursor = Cursor.SizeWE;
 
             m_CSplitter = new SplitterBar(this);
             m_CSplitter.SetPosition(128, 128);
             m_CSplitter.Dragged += OnCenterMoved;
-            m_CSplitter.Cursor = Cursors.SizeAll;
+            m_CSplitter.Cursor = Cursor.SizeAll;
 
             m_HVal = 0.5f;
             m_VVal = 0.5f;
@@ -196,7 +196,7 @@ namespace Gwen.Control
         /// </summary>
         /// <param name="index">Section index (0-3).</param>
         /// <param name="panel">Control to assign.</param>
-        public void SetPanel(int index, Base panel)
+        public void SetPanel(int index, Base? panel)
         {
             m_Sections[index] = panel;
 
