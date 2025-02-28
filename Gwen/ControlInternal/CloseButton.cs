@@ -1,33 +1,32 @@
 ﻿using System;
 using Gwen.Control;
 
-namespace Gwen.ControlInternal
+namespace Gwen.ControlInternal;
+
+/// <summary>
+/// Window close button.
+/// </summary>
+public class CloseButton : Button
 {
+    private readonly WindowControl m_Window;
+
     /// <summary>
-    /// Window close button.
+    /// Initializes a new instance of the <see cref="CloseButton"/> class.
     /// </summary>
-    public class CloseButton : Button
+    /// <param name="parent">Parent control.</param>
+    /// <param name="owner">Window that owns this button.</param>
+    public CloseButton(Base parent, WindowControl owner)
+        : base(parent)
     {
-        private readonly WindowControl m_Window;
+        m_Window = owner;
+    }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CloseButton"/> class.
-        /// </summary>
-        /// <param name="parent">Parent control.</param>
-        /// <param name="owner">Window that owns this button.</param>
-        public CloseButton(Base parent, WindowControl owner)
-            : base(parent)
-        {
-            m_Window = owner;
-        }
-
-        /// <summary>
-        /// Renders the control using specified skin.
-        /// </summary>
-        /// <param name="skin">Skin to use.</param>
-        protected override void Render(Skin.Base skin)
-        {
-            skin.DrawWindowCloseButton(this, IsDepressed && IsHovered, IsHovered && ShouldDrawHover, !m_Window.IsOnTop);
-        }
+    /// <summary>
+    /// Renders the control using specified skin.
+    /// </summary>
+    /// <param name="skin">Skin to use.</param>
+    protected override void Render(Skin.Base skin)
+    {
+        skin.DrawWindowCloseButton(this, IsDepressed && IsHovered, IsHovered && ShouldDrawHover, !m_Window.IsOnTop);
     }
 }

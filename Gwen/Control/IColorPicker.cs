@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Drawing;
 
-namespace Gwen.Control
+namespace Gwen.Control;
+
+public interface IColorPicker
 {
-    public interface IColorPicker
-    {
-        Color SelectedColor { get; }
-    }
+    Color SelectedColor { get; }
 }

@@ -1,71 +1,70 @@
 ﻿using System;
 
-namespace Gwen.Control.Property
+namespace Gwen.Control.Property;
+
+/// <summary>
+/// Checkable property.
+/// </summary>
+public class Check : Base
 {
+    protected readonly Control.CheckBox m_CheckBox;
+
     /// <summary>
-    /// Checkable property.
+    /// Initializes a new instance of the <see cref="Check"/> class.
     /// </summary>
-    public class Check : Base
+    /// <param name="parent">Parent control.</param>
+    public Check(Control.Base parent)
+        : base(parent)
     {
-        protected readonly Control.CheckBox m_CheckBox;
+        m_CheckBox = new Control.CheckBox(this);
+        m_CheckBox.ShouldDrawBackground = false;
+        m_CheckBox.CheckChanged += OnValueChanged;
+        m_CheckBox.IsTabable = true;
+        m_CheckBox.KeyboardInputEnabled = true;
+        m_CheckBox.SetPosition(2, 1);
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Check"/> class.
-        /// </summary>
-        /// <param name="parent">Parent control.</param>
-        public Check(Control.Base parent)
-            : base(parent)
+        Height = 18;
+    }
+
+    /// <summary>
+    /// Property value.
+    /// </summary>
+    public override string Value
+    {
+        get { return m_CheckBox.IsChecked ? "1" : "0"; }
+        set { base.Value = value; }
+    }
+
+    /// <summary>
+    /// Sets the property value.
+    /// </summary>
+    /// <param name="value">Value to set.</param>
+    /// <param name="fireEvents">Determines whether to fire "value changed" event.</param>
+    public override void SetValue(string value, bool fireEvents = false)
+    {
+        if (value == "1" || value.ToLower() == "true" || value.ToLower() == "yes")
         {
-            m_CheckBox = new Control.CheckBox(this);
-            m_CheckBox.ShouldDrawBackground = false;
-            m_CheckBox.CheckChanged += OnValueChanged;
-            m_CheckBox.IsTabable = true;
-            m_CheckBox.KeyboardInputEnabled = true;
-            m_CheckBox.SetPosition(2, 1);
-
-            Height = 18;
+            m_CheckBox.IsChecked = true;
         }
-
-        /// <summary>
-        /// Property value.
-        /// </summary>
-        public override string Value
+        else
         {
-            get { return m_CheckBox.IsChecked ? "1" : "0"; }
-            set { base.Value = value; }
+            m_CheckBox.IsChecked = false;
         }
+    }
 
-        /// <summary>
-        /// Sets the property value.
-        /// </summary>
-        /// <param name="value">Value to set.</param>
-        /// <param name="fireEvents">Determines whether to fire "value changed" event.</param>
-        public override void SetValue(string value, bool fireEvents = false)
-        {
-            if (value == "1" || value.ToLower() == "true" || value.ToLower() == "yes")
-            {
-                m_CheckBox.IsChecked = true;
-            }
-            else
-            {
-                m_CheckBox.IsChecked = false;
-            }
-        }
+    /// <summary>
+    /// Indicates whether the property value is being edited.
+    /// </summary>
+    public override bool IsEditing
+    {
+        get { return m_CheckBox.HasFocus; }
+    }
 
-        /// <summary>
-        /// Indicates whether the property value is being edited.
-        /// </summary>
-        public override bool IsEditing
-        {
-            get { return m_CheckBox.HasFocus; }
-        }
-
-        /// <summary>
-        /// Indicates whether the control is hovered by mouse pointer.
-        /// </summary>
-        public override bool IsHovered
-        {
-            get { return base.IsHovered || m_CheckBox.IsHovered; }
-        }
+    /// <summary>
+    /// Indicates whether the control is hovered by mouse pointer.
+    /// </summary>
+    public override bool IsHovered
+    {
+        get { return base.IsHovered || m_CheckBox.IsHovered; }
     }
 }

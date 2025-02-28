@@ -2,14 +2,13 @@
 using System.Drawing;
 using Gwen.Control;
 
-namespace Gwen.DragDrop
+namespace Gwen.DragDrop;
+
+public class Package
 {
-    public class Package
-    {
-        public string Name;
-        public object UserData;
-        public bool IsDraggable;
-        public Base DrawControl;
-        public Point HoldOffset;
-    }
+    public string Name;
+    public object UserData;
+    public bool IsDraggable;
+    public Base DrawControl;
+    public Point HoldOffset;
 }

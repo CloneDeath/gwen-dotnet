@@ -1,11 +1,10 @@
 ﻿using System;
 
-namespace Gwen
+namespace Gwen;
+
+public struct HSV
 {
-    public struct HSV
-    {
-        public float h;
-        public float s;
-        public float v;
-    }
+    public float h;
+    public float s;
+    public float v;
 }

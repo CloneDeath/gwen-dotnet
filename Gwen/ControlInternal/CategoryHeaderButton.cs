@@ -1,35 +1,34 @@
 ﻿using System;
 using Gwen.Control;
 
-namespace Gwen.ControlInternal
+namespace Gwen.ControlInternal;
+
+/// <summary>
+/// Header of CollapsibleCategory.
+/// </summary>
+public class CategoryHeaderButton : Button
 {
     /// <summary>
-    /// Header of CollapsibleCategory.
+    /// Initializes a new instance of the <see cref="CategoryHeaderButton"/> class.
     /// </summary>
-    public class CategoryHeaderButton : Button
+    /// <param name="parent">Parent control.</param>
+    public CategoryHeaderButton(Base parent)
+        : base(parent)
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CategoryHeaderButton"/> class.
-        /// </summary>
-        /// <param name="parent">Parent control.</param>
-        public CategoryHeaderButton(Base parent)
-            : base(parent)
-        {
-            ShouldDrawBackground = false;
-            IsToggle = true;
-            Alignment = Pos.Center;
-            TextPadding = new Padding(3, 0, 3, 0);
-        }
+        ShouldDrawBackground = false;
+        IsToggle = true;
+        Alignment = Pos.Center;
+        TextPadding = new Padding(3, 0, 3, 0);
+    }
 
-        /// <summary>
-        /// Updates control colors.
-        /// </summary>
-        public override void UpdateColors()
-        {
-            if (IsDepressed || ToggleState)
-                TextColor = Skin.Colors.Category.Header_Closed;
-            else
-                TextColor = Skin.Colors.Category.Header;
-        }
+    /// <summary>
+    /// Updates control colors.
+    /// </summary>
+    public override void UpdateColors()
+    {
+        if (IsDepressed || ToggleState)
+            TextColor = Skin.Colors.Category.Header_Closed;
+        else
+            TextColor = Skin.Colors.Category.Header;
     }
 }

@@ -1,48 +1,47 @@
 ﻿using System.IO;
 using Gwen.Control;
-namespace Gwen.CommonDialog
+namespace Gwen.CommonDialog;
+
+/// <summary>
+/// Dialog for selecting an existing directory.
+/// </summary>
+public class FolderBrowserDialog : FileDialog
 {
-    /// <summary>
-    /// Dialog for selecting an existing directory.
-    /// </summary>
-    public class FolderBrowserDialog : FileDialog
+    public FolderBrowserDialog(Control.Base parent)
+        : base(parent)
     {
-        public FolderBrowserDialog(Control.Base parent)
-            : base(parent)
+    }
+
+    protected override void OnCreated()
+    {
+        base.OnCreated();
+
+        FoldersOnly = true;
+        Title = "Select Folder";
+        OkButtonText = "Select";
+    }
+
+    protected override void OnItemSelected(string path)
+    {
+        if (Directory.Exists(path))
         {
+            SetCurrentItem(Path.GetFileName(path));
+        }
+    }
+
+    protected override bool IsSubmittedNameOk(string path)
+    {
+        if (Directory.Exists(path))
+        {
+            SetPath(path);
+            return true;
         }
 
-        protected override void OnCreated()
-        {
-            base.OnCreated();
+        return false;
+    }
 
-            FoldersOnly = true;
-            Title = "Select Folder";
-            OkButtonText = "Select";
-        }
-
-        protected override void OnItemSelected(string path)
-        {
-            if (Directory.Exists(path))
-            {
-                SetCurrentItem(Path.GetFileName(path));
-            }
-        }
-
-        protected override bool IsSubmittedNameOk(string path)
-        {
-            if (Directory.Exists(path))
-            {
-                SetPath(path);
-                return true;
-            }
-
-            return false;
-        }
-
-        protected override bool ValidateFileName(string path)
-        {
-            return Directory.Exists(path);
-        }
+    protected override bool ValidateFileName(string path)
+    {
+        return Directory.Exists(path);
     }
 }

@@ -4,98 +4,98 @@ using System;
 using System.Drawing;
 using Gwen.Control;
 
-namespace Gwen.ControlInternal
+namespace Gwen.ControlInternal;
+
+/// <summary>
+/// Displays text. Always sized to contents.
+/// </summary>
+public class Text : Base
 {
+    private string m_String;
+    private Font m_Font;
+
     /// <summary>
-    /// Displays text. Always sized to contents.
+    /// Font used to display the text.
     /// </summary>
-    public class Text : Base
+    /// <remarks>
+    /// The font is not being disposed by this class.
+    /// </remarks>
+    public Font Font
     {
-        private string m_String;
-        private Font m_Font;
-
-        /// <summary>
-        /// Font used to display the text.
-        /// </summary>
-        /// <remarks>
-        /// The font is not being disposed by this class.
-        /// </remarks>
-        public Font Font
+        get { return m_Font; }
+        set
         {
-            get { return m_Font; }
-            set
-            {
-                m_Font = value;
-                SizeToContents();
-            }
+            m_Font = value;
+            SizeToContents();
         }
+    }
 
-        /// <summary>
-        /// Text to display.
-        /// </summary>
-        public string String
+    /// <summary>
+    /// Text to display.
+    /// </summary>
+    public string String
+    {
+        get { return m_String; }
+        set
         {
-            get { return m_String; }
-            set
-            {
-                m_String = value;
-                SizeToContents();
-            }
+            m_String = value;
+            SizeToContents();
         }
+    }
 
-        /// <summary>
-        /// Text color.
-        /// </summary>
-        public Color TextColor { get; set; }
+    /// <summary>
+    /// Text color.
+    /// </summary>
+    public Color TextColor { get; set; }
 
-        /// <summary>
-        /// Determines whether the control should be automatically resized to fit the text.
-        /// </summary>
-        //public bool AutoSizeToContents { get; set; } // [omeg] added
+    /// <summary>
+    /// Determines whether the control should be automatically resized to fit the text.
+    /// </summary>
+    //public bool AutoSizeToContents { get; set; } // [omeg] added
 
-        /// <summary>
-        /// Text length in characters.
-        /// </summary>
-        public int Length { get { return String.Length; } }
+    /// <summary>
+    /// Text length in characters.
+    /// </summary>
+    public int Length { get { return String.Length; } }
 
-        /// <summary>
-        /// Text color override - used by tooltips.
-        /// </summary>
-        public Color TextColorOverride { get; set; }
+    /// <summary>
+    /// Text color override - used by tooltips.
+    /// </summary>
+    public Color TextColorOverride { get; set; }
 
-        /// <summary>
-        /// Text override - used to display different string.
-        /// </summary>
-        public string TextOverride { get; set; }
+    /// <summary>
+    /// Text override - used to display different string.
+    /// </summary>
+    public string TextOverride { get; set; }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Text"/> class.
-        /// </summary>
-        /// <param name="parent">Parent control.</param>
-        public Text(Base parent)
-            : base(parent)
-        {
-            m_Font = Skin.DefaultFont;
-            m_String = String.Empty;
-            TextColor = Skin.Colors.Label.Default;
-            MouseInputEnabled = false;
-            TextColorOverride = Color.FromArgb(0, 255, 255, 255); // A==0, override disabled
-        }
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Text"/> class.
+    /// </summary>
+    /// <param name="parent">Parent control.</param>
+    public Text(Base parent)
+        : base(parent)
+    {
+        m_Font = Skin.DefaultFont;
+        m_String = String.Empty;
+        TextColor = Skin.Colors.Label.Default;
+        MouseInputEnabled = false;
+        TextColorOverride = Color.FromArgb(0, 255, 255, 255); // A==0, override disabled
+    }
 
-        /// <summary>
-        /// Renders the control using specified skin.
-        /// </summary>
-        /// <param name="skin">Skin to use.</param>
-        protected override void Render(Skin.Base skin)
-        {
-            if (Length == 0 || Font == null) return;
+    /// <summary>
+    /// Renders the control using specified skin.
+    /// </summary>
+    /// <param name="skin">Skin to use.</param>
+    protected override void Render(Skin.Base skin)
+    {
+        if (Length == 0 || Font == null) return;
 
-            if (TextColorOverride.A == 0)
-                skin.Renderer.DrawColor = TextColor;
-            else
-                skin.Renderer.DrawColor = TextColorOverride;
+        if (TextColorOverride.A == 0)
+            skin.Renderer.DrawColor = TextColor;
+        else
+            skin.Renderer.DrawColor = TextColorOverride;
 
-            skin.Renderer.RenderText(Font, Point.Empty, TextOverride ?? String);
+        skin.Renderer.RenderText(Font, Point.Empty, TextOverride ?? String);
 
 #if DEBUG_TEXT_MEASURE
             {
@@ -116,99 +116,98 @@ namespace Gwen.ControlInternal
                 }
             }
 #endif
-        }
+    }
 
-        /// <summary>
-        /// Lays out the control's interior according to alignment, padding, dock etc.
-        /// </summary>
-        /// <param name="skin">Skin to use.</param>
-        protected override void Layout(Skin.Base skin)
+    /// <summary>
+    /// Lays out the control's interior according to alignment, padding, dock etc.
+    /// </summary>
+    /// <param name="skin">Skin to use.</param>
+    protected override void Layout(Skin.Base skin)
+    {
+        SizeToContents();
+        base.Layout(skin);
+    }
+
+    /// <summary>
+    /// Handler invoked when control's scale changes.
+    /// </summary>
+    protected override void OnScaleChanged()
+    {
+        Invalidate();
+    }
+
+    /// <summary>
+    /// Sizes the control to its contents.
+    /// </summary>
+    public void SizeToContents()
+    {
+        if (String == null)
+            return;
+
+        if (Font == null)
         {
-            SizeToContents();
-            base.Layout(skin);
+            throw new InvalidOperationException("Text.SizeToContents() - No Font!!\n");
         }
 
-        /// <summary>
-        /// Handler invoked when control's scale changes.
-        /// </summary>
-        protected override void OnScaleChanged()
+        Point p = new Point(1, Font.Size);
+
+        if (Length > 0)
         {
-            Invalidate();
+            p = Skin.Renderer.MeasureText(Font, TextOverride ?? String);
         }
 
-        /// <summary>
-        /// Sizes the control to its contents.
-        /// </summary>
-        public void SizeToContents()
+        if (p.X == Width && p.Y == Height)
+            return;
+
+        SetSize(p.X, p.Y);
+        Invalidate();
+        InvalidateParent();
+    }
+
+    /// <summary>
+    /// Gets the coordinates of specified character in the text.
+    /// </summary>
+    /// <param name="index">Character index.</param>
+    /// <returns>Character position in local coordinates.</returns>
+    public Point GetCharacterPosition(int index)
+    {
+        if (Length == 0 || index == 0)
         {
-            if (String == null)
-                return;
-
-            if (Font == null)
-            {
-                throw new InvalidOperationException("Text.SizeToContents() - No Font!!\n");
-            }
-
-            Point p = new Point(1, Font.Size);
-
-            if (Length > 0)
-            {
-                p = Skin.Renderer.MeasureText(Font, TextOverride ?? String);
-            }
-
-            if (p.X == Width && p.Y == Height)
-                return;
-
-            SetSize(p.X, p.Y);
-            Invalidate();
-            InvalidateParent();
+            return new Point(0, 0);
         }
 
-        /// <summary>
-        /// Gets the coordinates of specified character in the text.
-        /// </summary>
-        /// <param name="index">Character index.</param>
-        /// <returns>Character position in local coordinates.</returns>
-        public Point GetCharacterPosition(int index)
+        string sub = (TextOverride ?? String).Substring(0, index);
+        Point p = Skin.Renderer.MeasureText(Font, sub);
+
+        //if(p.Y >= Font.Size)
+        //	p = new Point(p.X, p.Y - Font.Size);
+        p.Y = 0;
+
+        return p;
+    }
+
+    /// <summary>
+    /// Searches for a character closest to given point.
+    /// </summary>
+    /// <param name="p">Point.</param>
+    /// <returns>Character index.</returns>
+    public int GetClosestCharacter(Point p)
+    {
+        int distance = MaxCoord;
+        int c = 0;
+
+        for (int i = 0; i < String.Length + 1; i++)
         {
-            if (Length == 0 || index == 0)
-            {
-                return new Point(0, 0);
-            }
+            Point cp = GetCharacterPosition(i);
+            int dist = Math.Abs(cp.X - p.X) + Math.Abs(cp.Y - p.Y); // this isn't proper // [omeg] todo: sqrt
 
-			string sub = (TextOverride ?? String).Substring(0, index);
-			Point p = Skin.Renderer.MeasureText(Font, sub);
+            if (dist > distance)
+                continue;
 
-			//if(p.Y >= Font.Size)
-			//	p = new Point(p.X, p.Y - Font.Size);
-			p.Y = 0;
-
-			return p;
+            distance = dist;
+            c = i;
         }
 
-        /// <summary>
-        /// Searches for a character closest to given point.
-        /// </summary>
-        /// <param name="p">Point.</param>
-        /// <returns>Character index.</returns>
-        public int GetClosestCharacter(Point p)
-        {
-            int distance = MaxCoord;
-            int c = 0;
-
-            for (int i = 0; i < String.Length + 1; i++)
-            {
-                Point cp = GetCharacterPosition(i);
-                int dist = Math.Abs(cp.X - p.X) + Math.Abs(cp.Y - p.Y); // this isn't proper // [omeg] todo: sqrt
-
-                if (dist > distance)
-                    continue;
-
-                distance = dist;
-                c = i;
-            }
-
-            return c;
-        }
-	}
+        return c;
+    }
 }
