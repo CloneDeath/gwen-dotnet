@@ -351,7 +351,11 @@ namespace Gwen.Renderer
             Debug.Print($"LoadFont {font.FaceName}");
             font.RealSize = font.Size * Scale;
 
-            var sysFont = new SixLabors.Fonts.Font(SystemFonts.TryGet(font.FaceName, out var f) ? f : throw new Exception(), font.Size);
+            var family = SystemFonts.TryGet(font.FaceName, out var f)
+                             ? f
+                             : SystemFonts.Families.First();
+
+            var sysFont = new SixLabors.Fonts.Font(family, font.Size);
             font.RendererData = sysFont;
             return true;
         }

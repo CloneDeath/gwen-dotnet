@@ -7,4 +7,14 @@
         <LangVersion>default</LangVersion>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Gwen.OpenTK\Gwen.OpenTK.csproj" />
+      <ProjectReference Include="..\Gwen.UnitTest\Gwen.UnitTest.csproj" />
+      <ProjectReference Include="..\Gwen\Gwen.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="OpenTK" Version="4.9.3" />
+    </ItemGroup>
+
 </Project>

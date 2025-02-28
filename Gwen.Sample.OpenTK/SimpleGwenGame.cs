@@ -7,6 +7,10 @@ using OpenTK.Input;
 using OpenTK.Graphics.OpenGL;
 using System.Drawing;
 using Gwen.Control;
+using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
+using OpenTK.Windowing.Desktop;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace Gwen.Sample.OpenTK
 {
@@ -28,15 +32,15 @@ namespace Gwen.Sample.OpenTK
         private bool altDown = false;
 
         public SimpleWindow()
-            : base(1024, 768)
+            : base(new GameWindowSettings(), new NativeWindowSettings{ClientSize = new Vector2i(1024, 768)})
         {
-            Keyboard.KeyDown += Keyboard_KeyDown;
-            Keyboard.KeyUp += Keyboard_KeyUp;
+            KeyDown += Keyboard_KeyDown;
+            KeyUp += Keyboard_KeyUp;
 
-            Mouse.ButtonDown += Mouse_ButtonDown;
-            Mouse.ButtonUp += Mouse_ButtonUp;
-            Mouse.Move += Mouse_Move;
-            Mouse.WheelChanged += Mouse_Wheel;
+            MouseDown += Mouse_ButtonDown;
+            MouseUp += Mouse_ButtonUp;
+            MouseMove += Mouse_Move;
+            MouseWheel += Mouse_Wheel;
 
             ftime = new List<long>(fps_frames);
             stopwatch = new Stopwatch();
@@ -53,15 +57,14 @@ namespace Gwen.Sample.OpenTK
         /// <summary>
         /// Occurs when a key is pressed.
         /// </summary>
-        /// <param name="sender">The KeyboardDevice which generated this event.</param>
         /// <param name="e">The key that was pressed.</param>
-        void Keyboard_KeyDown(object sender, KeyboardKeyEventArgs e)
+        void Keyboard_KeyDown(KeyboardKeyEventArgs e)
         {
-            if (e.Key == global::OpenTK.Input.Key.Escape)
-                Exit();
-            else if (e.Key == global::OpenTK.Input.Key.AltLeft)
+            if (e.Key == Keys.Escape)
+                Close();
+            else if (e.Key == Keys.LeftAlt)
                 altDown = true;
-            else if (altDown && e.Key == global::OpenTK.Input.Key.Enter)
+            else if (altDown && e.Key == Keys.Enter)
                 if (WindowState == WindowState.Fullscreen)
                     WindowState = WindowState.Normal;
                 else
@@ -70,28 +73,28 @@ namespace Gwen.Sample.OpenTK
             input.ProcessKeyDown(e);
         }
 
-        void Keyboard_KeyUp(object sender, KeyboardKeyEventArgs e)
+        void Keyboard_KeyUp(KeyboardKeyEventArgs e)
         {
             altDown = false;
             input.ProcessKeyUp(e);
         }
 
-        void Mouse_ButtonDown(object sender, MouseButtonEventArgs args)
+        void Mouse_ButtonDown(MouseButtonEventArgs args)
         {
             input.ProcessMouseMessage(args);
         }
 
-        void Mouse_ButtonUp(object sender, MouseButtonEventArgs args)
+        void Mouse_ButtonUp(MouseButtonEventArgs args)
         {
             input.ProcessMouseMessage(args);
         }
 
-        void Mouse_Move(object sender, MouseMoveEventArgs args)
+        void Mouse_Move(MouseMoveEventArgs args)
         {
             input.ProcessMouseMessage(args);
         }
 
-        void Mouse_Wheel(object sender, MouseWheelEventArgs args)
+        void Mouse_Wheel(MouseWheelEventArgs args)
         {
             input.ProcessMouseMessage(args);
         }
@@ -99,12 +102,11 @@ namespace Gwen.Sample.OpenTK
         /// <summary>
         /// Setup OpenGL and load resources here.
         /// </summary>
-        /// <param name="e">Not used.</param>
-        protected override void OnLoad(EventArgs e)
+        protected override void OnLoad()
         {
             GL.ClearColor(Color.MidnightBlue);
 
-            renderer = new Gwen.Renderer.OpenTK();
+            renderer = new Gwen.Renderer.OpenTK(this);
             skin = new Gwen.Skin.TexturedBase(renderer, "DefaultSkin.png");
             //skin = new Gwen.Skin.Simple(renderer);
             //skin.DefaultFont = new Font(renderer, "Courier", 10);
@@ -113,7 +115,7 @@ namespace Gwen.Sample.OpenTK
             input = new Input.OpenTK(this);
             input.Initialize(canvas);
 
-            canvas.SetSize(Width, Height);
+            canvas.SetSize(ClientSize.X, ClientSize.Y);
             canvas.ShouldDrawBackground = true;
             canvas.BackgroundColor = Color.FromArgb(255, 150, 170, 170);
             //canvas.KeyboardInputEnabled = true;
@@ -129,14 +131,14 @@ namespace Gwen.Sample.OpenTK
         /// </summary>
         /// <param name="e">Contains information on the new GameWindow size.</param>
         /// <remarks>There is no need to call the base implementation.</remarks>
-        protected override void OnResize(EventArgs e)
+        protected override void OnResize(ResizeEventArgs e)
         {
-            GL.Viewport(0, 0, Width, Height);
+            GL.Viewport(0, 0, ClientSize.X, ClientSize.Y);
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadIdentity();
-            GL.Ortho(0, Width, Height, 0, -1, 1);
+            GL.Ortho(0, ClientSize.X, ClientSize.Y, 0, -1, 1);
 
-            canvas.SetSize(Width, Height);
+            canvas.SetSize(ClientSize.X, ClientSize.Y);
         }
 
         /// <summary>
@@ -180,15 +182,12 @@ namespace Gwen.Sample.OpenTK
         /// Entry point of this example.
         /// </summary>
         [STAThread]
-        public static void Main()
-        {
-            using (SimpleWindow example = new SimpleWindow())
-            {
-                example.Title = "Gwen-DotNet OpenTK test";
-                example.VSync = VSyncMode.Off; // to measure performance
-                example.Run(0.0, 0.0);
-                //example.TargetRenderFrequency = 60;
-            }
+        public static void Main() {
+            using var example = new SimpleWindow();
+            example.Title = "Gwen-DotNet OpenTK test";
+            example.VSync = VSyncMode.Off; // to measure performance
+            example.Run();
+            //example.TargetRenderFrequency = 60;
         }
     }
 }
