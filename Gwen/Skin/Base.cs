@@ -73,7 +73,7 @@ namespace Gwen.Skin
                 return;
             m_Renderer.FreeFont(font);
         }
-        
+
         /// <summary>
         /// Sets the default text font.
         /// </summary>
@@ -84,6 +84,8 @@ namespace Gwen.Skin
             m_DefaultFont.FaceName = faceName;
             m_DefaultFont.Size = size;
         }
+
+        public void SetCursor(Cursor cursor) => m_Renderer.SetCursor(cursor);
 
         #region UI elements
         public virtual void DrawButton(Control.Base control, bool depressed, bool hovered, bool disabled) { }
@@ -204,7 +206,7 @@ namespace Gwen.Skin
         use the marlett font to draw these.. but since that's a Windows font it wasn't a very
         good cross platform solution.
         */
-        
+
         public virtual void DrawArrowDown(Rectangle rect)
         {
             float x = (rect.Width / 5.0f);

@@ -19,17 +19,17 @@ namespace Gwen.Control
         /// </summary>
         /// <param name="control">Event source.</param>
         /// <param name="args" >Additional arguments. May be empty (EventArgs.Empty).</param>
-		public delegate void GwenEventHandler<in T>(Base sender, T arguments) where T : System.EventArgs;
+		public delegate void GwenEventHandler<in T>(Base sender, T arguments) where T : EventArgs;
 
         private bool m_Disposed;
 
-        private Base m_Parent;
+        private Base? m_Parent;
 
         /// <summary>
         /// This is the panel's actual parent - most likely the logical
         /// parent's InnerPanel (if it has one). You should rarely need this.
         /// </summary>
-        private Base m_ActualParent;
+        private Base? m_ActualParent;
 
         /// <summary>
         /// If the innerpanel exists our children will automatically become children of that
@@ -37,9 +37,9 @@ namespace Gwen.Control
         /// </summary>
         protected Base? m_InnerPanel;
 
-        private Base m_ToolTip;
+        private Base? m_ToolTip;
 
-        private Skin.Base m_Skin;
+        private Skin.Base? m_Skin;
 
         private Rectangle m_Bounds;
         private Rectangle m_RenderBounds;
@@ -66,7 +66,7 @@ namespace Gwen.Control
         private bool m_CacheTextureDirty;
         private bool m_CacheToTexture;
 
-        private Package m_DragAndDrop_Package;
+        private Package? m_DragAndDrop_Package;
 
         private object? m_UserData;
 
@@ -95,7 +95,7 @@ namespace Gwen.Control
 		/// <summary>
 		/// Invoked when the control has been left-clicked.
 		/// </summary>
-		public virtual event GwenEventHandler<ClickedEventArgs> Clicked;
+		public virtual event GwenEventHandler<ClickedEventArgs>? Clicked;
 
 		/// <summary>
 		/// Invoked when the control has been double-left-clicked.
@@ -144,7 +144,7 @@ namespace Gwen.Control
         /// <summary>
         /// The logical parent. It's usually what you expect, the control you've parented it to.
         /// </summary>
-        public Base Parent
+        public Base? Parent
         {
             get { return m_Parent; }
             set
@@ -152,18 +152,12 @@ namespace Gwen.Control
                 if (m_Parent == value)
                     return;
 
-                if (m_Parent != null)
-                {
-                    m_Parent.RemoveChild(this, false);
-                }
+                m_Parent?.RemoveChild(this, false);
 
                 m_Parent = value;
                 m_ActualParent = null;
 
-                if (m_Parent != null)
-                {
-                    m_Parent.AddChild(this);
-                }
+                m_Parent?.AddChild(this);
             }
         }
 
@@ -174,7 +168,7 @@ namespace Gwen.Control
         /// </summary>
         public Pos Dock
         {
-            get { return m_Dock; }
+            get => m_Dock;
             set
             {
                 if (m_Dock == value)
@@ -208,7 +202,7 @@ namespace Gwen.Control
         /// </summary>
         public Base ToolTip
         {
-            get { return m_ToolTip; }
+            get => m_ToolTip;
             set
             {
                 m_ToolTip = value;
@@ -223,27 +217,19 @@ namespace Gwen.Control
         /// <summary>
         /// Indicates whether this control is a menu component.
         /// </summary>
-        internal virtual bool IsMenuComponent
-        {
-            get
-            {
-                if (m_Parent == null)
-                    return false;
-                return m_Parent.IsMenuComponent;
-            }
-        }
+        internal virtual bool IsMenuComponent => m_Parent is { IsMenuComponent: true };
 
         /// <summary>
         /// Determines whether the control should be clipped to its bounds while rendering.
         /// </summary>
-        protected virtual bool ShouldClip { get { return true; } }
+        protected virtual bool ShouldClip => true;
 
         /// <summary>
         /// Current padding - inner spacing.
         /// </summary>
         public Padding Padding
         {
-            get { return m_Padding; }
+            get => m_Padding;
             set
             {
                 if (m_Padding == value)
@@ -260,7 +246,7 @@ namespace Gwen.Control
         /// </summary>
         public Margin Margin
         {
-            get { return m_Margin; }
+            get => m_Margin;
             set
             {
                 if (m_Margin == value)
@@ -275,27 +261,32 @@ namespace Gwen.Control
         /// <summary>
         /// Indicates whether the control is on top of its parent's children.
         /// </summary>
-        public virtual bool IsOnTop { get { return this == Parent.m_Children.First(); } } // todo: validate
+        public virtual bool IsOnTop => this == Parent.m_Children.First(); // todo: validate
 
         /// <summary>
         /// User data associated with the control.
         /// </summary>
-        public object? UserData { get { return m_UserData; } set { m_UserData = value; } }
+        public object? UserData {
+            get => m_UserData;
+            set => m_UserData = value;
+        }
 
         /// <summary>
         /// Indicates whether the control is hovered by mouse pointer.
         /// </summary>
-        public virtual bool IsHovered { get { return InputHandler.HoveredControl == this; } }
+        public virtual bool IsHovered => InputHandler.HoveredControl == this;
 
         /// <summary>
         /// Indicates whether the control has focus.
         /// </summary>
-        public bool HasFocus { get { return InputHandler.KeyboardFocus == this; } }
+        public bool HasFocus => InputHandler.KeyboardFocus == this;
 
         /// <summary>
         /// Indicates whether the control is disabled.
         /// </summary>
-        public bool IsDisabled { get { return m_Disabled; } set { m_Disabled = value; } }
+        public bool IsDisabled { get => m_Disabled;
+            set => m_Disabled = value;
+        }
 
         /// <summary>
         /// Indicates whether the control is hidden.
@@ -375,8 +366,8 @@ namespace Gwen.Control
         /// </summary>
         protected bool ShouldDrawHover { get { return InputHandler.MouseFocus == this || InputHandler.MouseFocus == null; } }
 
-        protected virtual bool AccelOnlyFocus { get { return false; } }
-        protected virtual bool NeedsInputChars { get { return false; } }
+        protected virtual bool AccelOnlyFocus => false;
+        protected virtual bool NeedsInputChars => false;
 
         /// <summary>
         /// Indicates whether the control and its parents are visible.
@@ -388,10 +379,7 @@ namespace Gwen.Control
                 if (IsHidden)
                     return false;
 
-                if (Parent != null)
-                    return Parent.IsVisible;
-
-                return true;
+                return Parent == null || Parent.IsVisible;
             }
         }
 
@@ -417,7 +405,7 @@ namespace Gwen.Control
         /// </summary>
         public bool DrawDebugOutlines
         {
-            get { return m_DrawDebugOutlines; }
+            get => m_DrawDebugOutlines;
             set
             {
                 if (m_DrawDebugOutlines == value)
@@ -438,9 +426,9 @@ namespace Gwen.Control
         /// Initializes a new instance of the <see cref="Base"/> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public Base(Base parent = null)
+        public Base(Base? parent = null)
         {
-            m_Children = new List<Base>();
+            m_Children = [];
             m_Accelerators = new Dictionary<string, GwenEventHandler<EventArgs>>();
 
             Parent = parent;
@@ -1672,10 +1660,9 @@ namespace Gwen.Control
         /// <summary>
         /// Sets mouse cursor to current cursor.
         /// </summary>
-        public virtual void UpdateCursor()
-        {
-            Platform.Neutral.SetCursor(m_Cursor);
-        }
+        public virtual void UpdateCursor() => m_Skin?.SetCursor(m_Cursor);
+
+        public void SetCursor(Cursor cursor) => m_Skin?.SetCursor(cursor);
 
         // giver
         public virtual Package DragAndDrop_GetPackage(int x, int y)

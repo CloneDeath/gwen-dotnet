@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using TextCopy;
 
 namespace Gwen.Platform
@@ -9,7 +8,12 @@ namespace Gwen.Platform
     /// </summary>
     public static class Neutral
     {
-        private static DateTime m_FirstTime = DateTime.Now;
+        private static readonly DateTime m_FirstTime = DateTime.Now;
+        private static IPlatform? m_platform;
+
+        public static void Init(IPlatform platform) {
+            m_platform = platform;
+        }
 
         /// <summary>
         /// Gets text from clipboard.
@@ -31,7 +35,7 @@ namespace Gwen.Platform
         }
 
         /// <summary>
-        /// Gets elapsed time since this class was initalized.
+        /// Gets elapsed time since this class was initialized.
         /// </summary>
         /// <returns>Time interval in seconds.</returns>
         public static float GetTimeInSeconds()

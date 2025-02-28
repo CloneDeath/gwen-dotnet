@@ -1,21 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Threading;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Windowing.Common.Input;
+using OpenTK.Windowing.Desktop;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
 using Color = System.Drawing.Color;
+using Image = SixLabors.ImageSharp.Image;
 using PixelFormat = SixLabors.ImageSharp.PixelFormats;
 using Point = System.Drawing.Point;
 using Rectangle = System.Drawing.Rectangle;
-using SizeF = System.Drawing.SizeF;
 
 namespace Gwen.Renderer
 {
@@ -39,19 +39,19 @@ namespace Gwen.Renderer
         private int m_DrawCallCount;
         private bool m_ClipEnabled;
         private bool m_TextureEnabled;
-        static private int m_LastTextureID;
+        private static int m_LastTextureID;
 
         private bool m_WasBlendEnabled, m_WasTexture2DEnabled, m_WasDepthTestEnabled;
         private int m_PrevBlendSrc, m_PrevBlendDst, m_PrevAlphaFunc;
         private float m_PrevAlphaRef;
-        private bool m_RestoreRenderState;
+        private readonly GameWindow m_Parent;
+        private readonly bool m_RestoreRenderState;
 
-        public OpenTK(bool restoreRenderState = true)
-            : base()
-        {
+        public OpenTK(GameWindow parent, bool restoreRenderState = true) {
             m_Vertices = new Vertex[MaxVerts];
             m_VertexSize = Marshal.SizeOf(m_Vertices[0]);
             m_StringCache = new Dictionary<Tuple<String, Font>, TextRenderer>();
+            m_Parent = parent;
             m_RestoreRenderState = restoreRenderState;
         }
 
@@ -555,6 +555,22 @@ namespace Gwen.Renderer
             var pixel = Color.FromArgb(data[offset + 3], data[offset + 0], data[offset + 1], data[offset + 2]);
 
             return pixel;
+        }
+
+        public override void SetCursor(Cursor cursor) {
+            m_Parent.Cursor = cursor switch {
+                Cursor.Beam => MouseCursor.IBeam,
+                Cursor.Normal => MouseCursor.Default,
+                Cursor.SizeNS => MouseCursor.ResizeNS,
+                Cursor.SizeWE => MouseCursor.ResizeEW,
+                Cursor.SizeNWSE => MouseCursor.ResizeNWSE,
+                Cursor.SizeNESW => MouseCursor.ResizeNESW,
+                Cursor.SizeAll => MouseCursor.ResizeAll,
+                Cursor.No => MouseCursor.NotAllowed,
+                Cursor.Wait => MouseCursor.Crosshair,
+                Cursor.Finger => MouseCursor.PointingHand,
+                _ => throw new ArgumentOutOfRangeException(nameof(cursor), cursor, null)
+            };
         }
     }
 }

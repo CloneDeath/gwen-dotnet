@@ -92,7 +92,7 @@ namespace Gwen.DragDrop
             //
             m_NewHoveredControl = control;
 
-            // Nothing to change..
+            // Nothing to change...
             if (HoveredControl == m_NewHoveredControl)
                 return;
 
@@ -111,14 +111,14 @@ namespace Gwen.DragDrop
             while (m_NewHoveredControl != null && !m_NewHoveredControl.DragAndDrop_CanAcceptPackage(CurrentPackage))
             {
                 // We can't drop on this control, so lets try to drop
-                // onto its parent..
+                // onto its parent...
                 m_NewHoveredControl = m_NewHoveredControl.Parent;
 
                 // Its parents are dead. We can't drop it here.
                 // Show the NO WAY cursor.
                 if (m_NewHoveredControl == null)
                 {
-                    Platform.Neutral.SetCursor(Cursor.No);
+                    HoveredControl.SetCursor(Cursor.No);
                 }
             }
 
@@ -198,7 +198,7 @@ namespace Gwen.DragDrop
 
             // Override the cursor - since it might have been set my underlying controls
             // Ideally this would show the 'being dragged' control. TODO
-            Platform.Neutral.SetCursor(Cursor.Normal);
+            HoveredControl.SetCursor(Cursor.Normal);
 
             hoveredControl.Redraw();
         }

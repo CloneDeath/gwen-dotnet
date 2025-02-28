@@ -11,7 +11,7 @@ namespace Gwen.CommonDialog
     /// </summary>
     public abstract class FileDialog : WindowControl
     {
-        private Action<string>? m_Callback;
+        private Action<string?>? m_Callback;
 
         private string m_CurrentFolder;
         private string m_CurrentFilter;
@@ -88,26 +88,26 @@ namespace Gwen.CommonDialog
         {
         }
 
-        protected override void OnCreated()
-        {
-            m_Folders = FindChildByName<TreeControl>("Folders");
-            m_Items = FindChildByName<ListBox>("Items");
-            m_Path = FindChildByName<TextBox>("Path");
-            m_SelectedName = FindChildByName<TextBox>("SelectedName");
-            m_Filters = FindChildByName<ComboBox>("Filters");
-            m_Ok = FindChildByName<Button>("Ok");
-            m_NewFolder = FindChildByName<Button>("NewFolder");
-            m_NameFilterSplitter = FindChildByName<VerticalSplitter>("NameFilterSplitter");
-            m_FileNameLabel = FindChildByName<Label>("FileNameLabel");
-
-            UpdateFolders();
-
-            m_OnClosing = false;
-
-            m_CurrentFolder = Directory.GetCurrentDirectory();
-
-            m_CurrentFilter = "*.*";
-            m_Filters.AddItem("All files (*.*)", "All files (*.*)", "*.*");
+        protected virtual void OnCreated() {
+            throw new NotImplementedException();
+            // m_Folders = FindChildByName<TreeControl>("Folders");
+            // m_Items = FindChildByName<ListBox>("Items");
+            // m_Path = FindChildByName<TextBox>("Path");
+            // m_SelectedName = FindChildByName<TextBox>("SelectedName");
+            // m_Filters = FindChildByName<ComboBox>("Filters");
+            // m_Ok = FindChildByName<Button>("Ok");
+            // m_NewFolder = FindChildByName<Button>("NewFolder");
+            // m_NameFilterSplitter = FindChildByName<VerticalSplitter>("NameFilterSplitter");
+            // m_FileNameLabel = FindChildByName<Label>("FileNameLabel");
+            //
+            // UpdateFolders();
+            //
+            // m_OnClosing = false;
+            //
+            // m_CurrentFolder = Directory.GetCurrentDirectory();
+            //
+            // m_CurrentFilter = "*.*";
+            // m_Filters.AddItem("All files (*.*)", "All files (*.*)", "*.*");
         }
 
         /// <summary>
@@ -376,18 +376,19 @@ namespace Gwen.CommonDialog
 
         private void UpdateFolders()
         {
-            m_Folders.DeleteAllChildren();
-
-            foreach (ISpecialFolder folder in Platform.GwenPlatform.GetSpecialFolders())
-            {
-                TreeNode category = m_Folders.FindNodeByName(folder.Category, false);
-                if (category == null)
-                    category = m_Folders.AddNode(folder.Category, folder.Category, null);
-
-                category.AddNode(folder.Name, folder.Name, folder.Path);
-            }
-
-            m_Folders.ExpandAll();
+            throw new NotImplementedException();
+            // m_Folders.DeleteAllChildren();
+            //
+            // foreach (ISpecialFolder folder in Platform.GwenPlatform.GetSpecialFolders())
+            // {
+            //     TreeNode category = m_Folders.FindNodeByName(folder.Category, false);
+            //     if (category == null)
+            //         category = m_Folders.AddNode(folder.Category, folder.Category, null);
+            //
+            //     category.AddNode(folder.Name, folder.Name, folder.Path);
+            // }
+            //
+            // m_Folders.ExpandAll();
         }
 
         private string FormatFileLength(long length)

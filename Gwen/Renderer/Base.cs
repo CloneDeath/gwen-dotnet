@@ -7,7 +7,7 @@ namespace Gwen.Renderer
     /// <summary>
     /// Base renderer.
     /// </summary>
-    public class Base : IDisposable
+    public abstract class Base : IDisposable
     {
         //public Random rnd;
         private Point m_RenderOffset;
@@ -259,7 +259,7 @@ namespace Gwen.Renderer
         }
 
         //
-        // No need to implement these functions in your derived class, but if 
+        // No need to implement these functions in your derived class, but if
         // you can do them faster than the default implementation it's a good idea to.
         //
 
@@ -435,5 +435,7 @@ namespace Gwen.Renderer
 
             m_ClipRegion = r;
         }
+
+        public abstract void SetCursor(Cursor cursor);
     }
 }

@@ -54,7 +54,8 @@ namespace Gwen.CommonDialog
                 // TODO make this a MessageBoxButtons.YesNo control...
                 MessageBox win = new MessageBox(this,
                     $"File '{Path.GetFileName(path)}' already exists. Do you want to replace it?", Title);
-                win.Dismissed += OnMessageBoxDismissed;
+                throw new NotImplementedException();
+                // win.Dismissed += OnMessageBoxDismissed;
                 win.UserData = path;
                 return false;
             }
@@ -62,10 +63,10 @@ namespace Gwen.CommonDialog
             return true;
         }
 
-        private void OnMessageBoxDismissed(Control.Base sender, MessageBoxResultEventArgs args)
-        {
-            if (args.Result == MessageBoxResult.Yes)
-                Close(sender.UserData as string);
-        }
+        // private void OnMessageBoxDismissed(Control.Base sender, MessageBoxResultEventArgs args)
+        // {
+        //     if (args.Result == MessageBoxResult.Yes)
+        //         Close(sender.UserData as string);
+        // }
     }
 }
